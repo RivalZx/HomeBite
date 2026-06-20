@@ -1,0 +1,63 @@
+<view class="page">
+  <!-- 编辑时显示标题 -->
+  <view class="form-section">
+    <view class="form-group">
+      <text class="form-label">菜品照片</text>
+      <view class="photo-upload" bindtap="chooseImage">
+        <image class="photo-preview" wx:if="{{imageUrl}}" src="{{imageUrl}}" mode="aspectFill"></image>
+        <view class="photo-placeholder" wx:else>
+          <text class="photo-icon">📸</text>
+          <text class="photo-text">拍一张</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">菜名</text>
+      <input class="form-input" placeholder="比如：红烧牛肉面" value="{{dishName}}" bindinput="onNameInput" maxlength="20" />
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">分类</text>
+      <view class="cate-picker">
+        <view
+          class="cate-option {{category === 'noodle' ? 'active' : ''}}"
+          data-cate="noodle"
+          bindtap="selectCategory">
+          <text>🍜 吃面</text>
+        </view>
+        <view
+          class="cate-option {{category === 'rice' ? 'active' : ''}}"
+          data-cate="rice"
+          bindtap="selectCategory">
+          <text>🍚 吃米</text>
+        </view>
+        <view
+          class="cate-option {{category === 'feast' ? 'active' : ''}}"
+          data-cate="feast"
+          bindtap="selectCategory">
+          <text>🍗 大餐</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">备注（可选）</text>
+      <input class="form-input" placeholder="比如：少放盐、多加点肉" value="{{note}}" bindinput="onNoteInput" />
+    </view>
+  </view>
+
+  <!-- 删除按钮（编辑模式时显示） -->
+  <view class="delete-area" wx:if="{{isEdit}}">
+    <view class="delete-btn" bindtap="deleteDish">
+      删除这道菜
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-actions">
+    <view class="btn-primary {{!canSave ? 'disabled' : ''}}" bindtap="saveDish">
+      {{isEdit ? '保存修改' : '加入菜单'}}
+    </view>
+  </view>
+</view>

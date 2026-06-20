@@ -1,0 +1,17 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/wishlist/wishlist",
+    "pages/add-dish/add-dish",
+    "pages/history/history"
+  ],
+  "window": {
+    "navigationBarTitleText": "HomeBite",
+    "navigationBarBackgroundColor": "#FFFDF8",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFFDF8",
+    "backgroundTextStyle": "dark"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
