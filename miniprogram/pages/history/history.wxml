@@ -1,0 +1,27 @@
+<view class="page">
+  <view class="empty" wx:if="{{orders.length === 0 && !loading}}">
+    <view class="empty-icon">📋</view>
+    <view class="empty-text">还没有点餐记录</view>
+    <view class="btn-primary" bindtap="goHome">去点餐</view>
+  </view>
+  <view class="loading" wx:if="{{loading}}"><text class="loading-text">加载中...</text></view>
+  <view class="order-list" wx:else>
+    <view class="order-card" wx:for="{{orders}}" wx:key="_id">
+      <view class="order-header">
+        <view class="order-date-block">
+          <text class="order-date-day">{{item._dayStr}}</text>
+          <text class="order-date-month">{{item._monthStr}}</text>
+        </view>
+        <view class="order-datetime">
+          <text class="order-date-text">{{item._weekdayStr}}</text>
+          <text class="order-time-text">{{item._timeStr}}</text>
+        </view>
+        <text class="order-status">{{item.status === 'pending' ? '待做' : '已完成'}}</text>
+      </view>
+      <view class="order-items">
+        <text class="order-dish" wx:for="{{item.items}}" wx:for-item="dish" wx:key="index">{{dish.name}}</text>
+      </view>
+      <view class="order-note" wx:if="{{item.note}}"><text class="note-tag">备注：</text>{{item.note}}</view>
+    </view>
+  </view>
+</view>

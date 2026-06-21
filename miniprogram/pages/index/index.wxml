@@ -1,0 +1,86 @@
+<view class="page">
+  <view class="top-bar">
+    <view class="family-name">
+      <text class="family-icon">🏠</text>
+      <text>{{familyName}}</text>
+    </view>
+    <view class="top-actions">
+      <view class="top-btn" bindtap="goHistory">
+        <text class="top-emoji">📋</text>
+        <text class="top-label">记录</text>
+      </view>
+    </view>
+  </view>
+
+  <swiper class="carousel" indicator-dots="{{true}}" indicator-color="#ddd" indicator-active-color="#A9D8F5"
+    autoplay="{{true}}" interval="4000" circular="{{true}}" previous-margin="36rpx" next-margin="36rpx"
+    wx:if="{{carousels.length > 0}}">
+    <swiper-item wx:for="{{carousels}}" wx:key="index">
+      <view class="carousel-slide">
+        <image class="carousel-img" wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" binderror="onCarouselImgError" data-index="{{index}}"></image>
+        <view class="carousel-placeholder" wx:else>
+          <text class="carousel-emoji">{{item.emoji}}</text>
+        </view>
+        <view class="carousel-label">{{item.label}}</view>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <view class="categories">
+    <view class="cate-btn {{currentCategory === 'noodle' ? 'active' : ''}}" data-cate="noodle" bindtap="switchCategory">
+      <text class="cate-emoji">🍜</text><text>吃面！</text>
+    </view>
+    <view class="cate-btn {{currentCategory === 'rice' ? 'active' : ''}}" data-cate="rice" bindtap="switchCategory">
+      <text class="cate-emoji">🍚</text><text>吃米！</text>
+    </view>
+    <view class="cate-btn {{currentCategory === 'feast' ? 'active' : ''}}" data-cate="feast" bindtap="switchCategory">
+      <text class="cate-emoji">🍗</text><text>大餐！</text>
+    </view>
+  </view>
+
+  <view class="dish-grid" wx:if="{{filteredDishes.length > 0}}">
+    <view class="dish-card" wx:for="{{filteredDishes}}" wx:key="id"
+      data-id="{{item.id}}" bindtap="toggleDish" bindlongpress="editDish">
+      <view class="dish-img-wrap {{item.selected ? 'selected' : ''}}">
+        <image class="dish-img" wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" binderror="onDishImgError" data-id="{{item.id}}"></image>
+        <view class="dish-placeholder" wx:else style="background: {{cateBg(item.category)}};">
+          <text class="dish-emoji">{{cateEmoji(item.category)}}</text>
+        </view>
+        <view class="dish-check" wx:if="{{item.selected}}">✓</view>
+      </view>
+      <text class="dish-name {{item.selected ? 'selected' : ''}}">{{item.name}}</text>
+    </view>
+    <view class="dish-card add-card" bindtap="goAddDish">
+      <view class="add-btn"><text class="add-icon">+</text></view>
+      <text class="add-label">加一道</text>
+    </view>
+  </view>
+
+  <view class="bottom-spacer"></view>
+
+  <view class="bottom-bar">
+    <view class="bottom-inner">
+      <view class="wishlist-btn" bindtap="goWishlist">
+        <view class="wishlist-icon-wrap">
+          <text class="wishlist-icon">❤</text>
+          <view class="badge" wx:if="{{selectedCount > 0}}">{{selectedCount}}</view>
+        </view>
+        <text class="wishlist-text">心愿单</text>
+      </view>
+      <view class="submit-btn {{selectedCount === 0 ? 'disabled' : ''}}" bindtap="submitOrder">
+        <text>提交点餐</text>
+        <text class="submit-note" wx:if="{{selectedCount > 0}}">{{selectedCount}}道菜</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{filteredDishes.length === 0 && !loading}}">
+    <view class="empty-icon">🍽️</view>
+    <view class="empty-text">这里还没有菜菜，先加一道吧</view>
+    <view class="btn-primary" bindtap="goAddDish" style="margin-top: 24rpx;">加一道 +</view>
+  </view>
+
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-text">加载菜谱中...</text>
+  </view>
+</view>

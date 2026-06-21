@@ -1,0 +1,37 @@
+<view class="page">
+  <view class="form-section">
+    <view class="form-group">
+      <text class="form-label">菜品照片</text>
+      <view class="photo-upload" bindtap="chooseImage">
+        <image class="photo-preview" wx:if="{{imageUrl}}" src="{{imageUrl}}" mode="aspectFill"></image>
+        <view class="photo-placeholder" wx:else>
+          <text class="photo-icon">📸</text>
+          <text class="photo-text">拍一张</text>
+        </view>
+      </view>
+    </view>
+    <view class="form-group">
+      <text class="form-label">菜名</text>
+      <input class="form-input" placeholder="比如：红烧牛肉面" value="{{dishName}}" bindinput="onNameInput" maxlength="20" />
+    </view>
+    <view class="form-group">
+      <text class="form-label">分类</text>
+      <view class="cate-picker">
+        <view class="cate-option {{category === 'noodle' ? 'active' : ''}}" data-cate="noodle" bindtap="selectCategory">🍜 吃面</view>
+        <view class="cate-option {{category === 'rice' ? 'active' : ''}}" data-cate="rice" bindtap="selectCategory">🍚 吃米</view>
+        <view class="cate-option {{category === 'feast' ? 'active' : ''}}" data-cate="feast" bindtap="selectCategory">🍗 大餐</view>
+      </view>
+    </view>
+    <view class="upload-progress" wx:if="{{uploading}}">
+      <text class="upload-text">⏳ 上传图片中...</text>
+    </view>
+  </view>
+  <view class="delete-area" wx:if="{{isEdit}}">
+    <view class="delete-btn" bindtap="deleteDish">删除这道菜</view>
+  </view>
+  <view class="bottom-actions">
+    <view class="btn-primary {{!canSave || uploading ? 'disabled' : ''}}" bindtap="saveDish">
+      {{isEdit ? '保存修改' : '加入菜单'}}
+    </view>
+  </view>
+</view>

@@ -12,3 +12,14 @@ $RECYCLE.BIN/
 
 # Node.js
 node_modules/
+
+# 微信小程序
+project.private.config.json
+
+# 本地菜品图片（太大，不上传）
+photos/
+
+# IDE
+.idea/
+*.swp
+*.swo
