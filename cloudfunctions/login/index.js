@@ -8,9 +8,41 @@ exports.main = async (event) => {
 
   // 查用户是否已加入家庭
   const member = await db.collection('family_members').where({ openid: OPENID }).get()
+  const hasExistingFamily = member.data.length > 0
 
-  // 已有家庭 → 直接返回
-  if (member.data.length > 0) {
+  // ====== 受邀加入已有家庭（优先级最高） ======
+  if (inviteFamilyId) {
+    const family = await db.collection('families').doc(inviteFamilyId).get().catch(() => null)
+    if (family) {
+      if (hasExistingFamily) {
+        // 已有家庭 → 切换到被邀请的家庭
+        await db.collection('family_members').doc(member.data[0]._id).update({
+          data: { familyId: inviteFamilyId, role: 'member', nickname: nickname || '', avatar: avatar || '' }
+        })
+      } else {
+        // 新用户 → 直接加入
+        await db.collection('family_members').add({
+          data: {
+            openid: OPENID,
+            familyId: inviteFamilyId,
+            nickname: nickname || '',
+            avatar: avatar || '',
+            role: 'member',
+            joinedAt: db.serverDate()
+          }
+        })
+      }
+      return {
+        openid: OPENID,
+        familyId: inviteFamilyId,
+        role: 'member',
+        familyName: family.data.name || '我的家'
+      }
+    }
+  }
+
+  // ====== 已有家庭（无邀请时） ======
+  if (hasExistingFamily) {
     const user = member.data[0]
 
     // 升级旧数据：从 'default' 迁移到真实家庭
@@ -19,7 +51,7 @@ exports.main = async (event) => {
       await db.collection('families').add({
         data: {
           _id: newFamilyId,
-          name: '我的家',
+          name: nickname ? nickname + '的家' : '我的家',
           createdBy: OPENID,
           createdAt: db.serverDate()
         }
@@ -30,7 +62,7 @@ exports.main = async (event) => {
       await db.collection('dishes').where({ familyId: 'default' }).update({
         data: { familyId: newFamilyId }
       })
-      return { openid: OPENID, familyId: newFamilyId, role: 'owner', familyName: '我的家' }
+      return { openid: OPENID, familyId: newFamilyId, role: 'owner', familyName: nickname ? nickname + '的家' : '我的家' }
     }
 
     const family = await db.collection('families').doc(user.familyId).get().catch(() => null)
@@ -42,32 +74,7 @@ exports.main = async (event) => {
     }
   }
 
-  // ====== 新用户 ======
-
-  // 受邀加入已有家庭
-  if (inviteFamilyId) {
-    const family = await db.collection('families').doc(inviteFamilyId).get().catch(() => null)
-    if (family) {
-      await db.collection('family_members').add({
-        data: {
-          openid: OPENID,
-          familyId: inviteFamilyId,
-          nickname: nickname || '',
-          avatar: avatar || '',
-          role: 'member',
-          joinedAt: db.serverDate()
-        }
-      })
-      return {
-        openid: OPENID,
-        familyId: inviteFamilyId,
-        role: 'member',
-        familyName: family.data.name || '我的家'
-      }
-    }
-  }
-
-  // 创建新家庭
+  // ====== 创建新家庭 ======
   const familyId = 'fam_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)
   await db.collection('families').add({
     data: {

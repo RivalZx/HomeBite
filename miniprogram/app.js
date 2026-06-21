@@ -7,8 +7,8 @@ App({
       traceUser: true
     })
     db = wx.cloud.database()
-    // 登录 + 创建/获取家庭
-    this.login()
+    // 登录由首页的 loadData 触发（为了支持带邀请参数打开）
+    // 不在 onLaunch 中提前调用 login()
   },
 
   globalData: {
@@ -36,7 +36,9 @@ App({
       { id: 'default_11', name: '宫保鸡丁', category: 'feast', imageUrl: '', note: '', selected: false },
     ],
     selectedDishes: [],
-    orders: []
+    orders: [],
+    pendingInvite: '',
+    isLoggingIn: false
   },
 
   // 微信登录 + 创建/加入家庭（支持邀请）
@@ -52,6 +54,7 @@ App({
               this.globalData.familyId = saved.familyId || 'default'
               this.globalData.currentUser = saved.currentUser || { nickname: '我', avatar: '👤', role: 'owner', isLoggedIn: true }
               this.globalData.familyName = saved.familyName || '兜兜家'
+              this.globalData.isLoggingIn = false
               resolve(saved)
               return
             }
@@ -72,6 +75,7 @@ App({
                 role: data.role || 'member',
                 isLoggedIn: true
               }
+              this.globalData.isLoggingIn = false
               wx.setStorageSync('hb_user', {
                 openid: data.openid,
                 familyId: data.familyId,
@@ -84,11 +88,12 @@ App({
               console.error('登录失败', err)
               const cached = wx.getStorageSync('hb_user')
               if (cached) Object.assign(this.globalData, cached)
+              this.globalData.isLoggingIn = false
               resolve(null)
             }
           })
         },
-        fail: () => resolve(null)
+        fail: () => { this.globalData.isLoggingIn = false; resolve(null) }
       })
     })
   },

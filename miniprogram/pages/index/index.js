@@ -17,9 +17,10 @@ Page({
   },
 
   onLoad(options) {
-    // 被邀请时，保存邀请码，登录时使用
+    // 被邀请时：强制重新登录 + 保存邀请码
     if (options && options.familyId) {
-      this.inviteFamilyId = options.familyId
+      app.globalData.pendingInvite = options.familyId
+      app.globalData.currentUser.isLoggedIn = false  // 强制重新登录
     }
     this.loadData()
   },
@@ -27,11 +28,18 @@ Page({
   onShow() { this.loadData() },
 
   async loadData() {
+    if (this._loading) return
+    this._loading = true
     this.setData({ loading: true })
 
     // 等待登录完成（如果还没登录）
     if (!app.globalData.currentUser.isLoggedIn) {
-      await app.login(this.inviteFamilyId || '')
+      const inviteId = app.globalData.pendingInvite || ''
+      await app.login(inviteId)
+      // 登录完成后清除邀请标记
+      if (app.globalData.pendingInvite) {
+        app.globalData.pendingInvite = ''
+      }
     }
 
     // 同步用户信息
@@ -56,6 +64,7 @@ Page({
     this.buildCarousel()
     this.filterDishes()
     this.updateSelectedCount()
+    this._loading = false
     this.setData({ loading: false })
   },
 
