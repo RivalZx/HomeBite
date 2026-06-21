@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/wishlist/wishlist",
     "pages/add-dish/add-dish",
-    "pages/history/history"
+    "pages/history/history",
+    "pages/member/member"
   ],
   "window": {
     "navigationBarTitleText": "HomeBite",

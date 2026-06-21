@@ -7,21 +7,51 @@ Page({
     carousels: [],
     filteredDishes: [],
     selectedCount: 0,
-    loading: true
+    loading: true,
+    drawerOpen: false,
+    currentUser: {
+      nickname: '我',
+      avatar: '👤',
+      role: '主人'
+    }
   },
 
-  onLoad() { this.loadData() },
+  onLoad(options) {
+    // 被邀请时，保存邀请码，登录时使用
+    if (options && options.familyId) {
+      this.inviteFamilyId = options.familyId
+    }
+    this.loadData()
+  },
+
   onShow() { this.loadData() },
 
   async loadData() {
     this.setData({ loading: true })
-    // 先尝试从云数据库加载，失败也没关系，默认数据兜底
+
+    // 等待登录完成（如果还没登录）
+    if (!app.globalData.currentUser.isLoggedIn) {
+      await app.login(this.inviteFamilyId || '')
+    }
+
+    // 同步用户信息
+    const gu = app.globalData
+    if (gu.currentUser && gu.currentUser.isLoggedIn) {
+      this.setData({
+        familyName: gu.familyName || '兜兜家',
+        currentUser: {
+          nickname: gu.currentUser.nickname || '我',
+          avatar: gu.currentUser.avatar || '👤',
+          role: gu.currentUser.role === 'owner' ? '主人' : '成员'
+        }
+      })
+    }
+
     try {
       await app.fetchDishes()
     } catch (e) {
       console.error('云加载失败，使用默认数据', e)
     }
-    // 无论云加载成功还是失败，都渲染页面
     this.buildCarousel()
     this.filterDishes()
     this.updateSelectedCount()
@@ -97,6 +127,35 @@ Page({
       this.setData({ selectedCount: 0 })
       this.filterDishes()
     } catch (e) { wx.showToast({ title: '提交失败', icon: 'none' }) }
+  },
+
+  // ===== 抽屉菜单 =====
+  openDrawer() {
+    this.setData({ drawerOpen: true })
+  },
+
+  closeDrawer() {
+    this.setData({ drawerOpen: false })
+  },
+
+  goMember() {
+    this.closeDrawer()
+    wx.navigateTo({ url: '/pages/member/member' })
+  },
+
+  inviteFamily() {
+    this.closeDrawer()
+    // 触发微信分享
+    wx.showToast({ title: '点击右上角分享给家人', icon: 'none' })
+  },
+
+  // 右上角分享（首页和成员页都可触发）
+  onShareAppMessage() {
+    return {
+      title: '🏠 来 HomeBite 一起点餐吧！',
+      path: `/pages/index/index?familyId=${app.globalData.familyId}`,
+      imageUrl: ''
+    }
   },
 
   // 轮播图加载失败时，显示默认占位

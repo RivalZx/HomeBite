@@ -1,0 +1,30 @@
+<view class="page">
+  <view class="loading" wx:if="{{loading}}"><text class="loading-text">加载中...</text></view>
+
+  <block wx:else>
+    <!-- 成员列表 -->
+    <view class="section">
+      <text class="section-title">家庭成员 · {{members.length}}人</text>
+      <view class="member-item" wx:for="{{members}}" wx:key="_id">
+        <view class="member-avatar">
+          <text class="member-avatar-text">{{item.avatar || '👤'}}</text>
+        </view>
+        <view class="member-info">
+          <text class="member-name">{{item.nickname || '家人'}}</text>
+          <text class="member-role-tag {{item.role === 'owner' ? 'owner' : ''}}">
+            {{item.role === 'owner' ? '主人' : '成员'}}
+          </text>
+        </view>
+        <text class="member-badge" wx:if="{{item.openid === myOpenid}}">我</text>
+      </view>
+    </view>
+
+    <!-- 邀请按钮 -->
+    <view class="invite-section">
+      <view class="btn-primary invite-btn" bindtap="inviteMember">
+        🔗 邀请家人加入
+      </view>
+      <text class="invite-hint">通过微信分享给家人，对方打开后自动加入</text>
+    </view>
+  </block>
+</view>

@@ -18,6 +18,10 @@
         </view>
         <text class="order-status">{{item.status === 'pending' ? '待做' : '已完成'}}</text>
       </view>
+      <view class="order-by" wx:if="{{item.createdByName}}">
+        <text class="order-by-icon">👤</text>
+        <text class="order-by-name">{{item.createdByName}} 点的</text>
+      </view>
       <view class="order-items">
         <text class="order-dish" wx:for="{{item.items}}" wx:for-item="dish" wx:key="index">{{dish.name}}</text>
       </view>

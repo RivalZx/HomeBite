@@ -1,6 +1,8 @@
 .page { padding: 0 32rpx 160rpx; min-height: 100vh; }
 
 .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 20rpx 0 10rpx; }
+.top-left { width: 68rpx; height: 68rpx; display: flex; align-items: center; justify-content: center; margin-left: -12rpx; }
+.menu-icon { font-size: 40rpx; color: #222; }
 .family-name { display: flex; align-items: center; gap: 10rpx; font-size: 32rpx; font-weight: 600; }
 .family-icon { font-size: 36rpx; }
 .top-actions { display: flex; gap: 20rpx; }
@@ -54,3 +56,163 @@
 
 .loading-state { display: flex; justify-content: center; padding: 100rpx 0; }
 .loading-text { font-size: 28rpx; color: #999; }
+
+/* ===== 侧边抽屉 ===== */
+.drawer-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 500;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.drawer-mask.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.drawer-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 520rpx;
+  background: #FFFDF8;
+  z-index: 501;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  box-shadow: 4rpx 0 20rpx rgba(0,0,0,0.06);
+}
+
+.drawer-panel.open {
+  transform: translateX(0);
+}
+
+.drawer-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 120rpx 0 40rpx;
+}
+
+.drawer-user {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 32rpx 36rpx;
+  border-bottom: 1px solid #F0EBE6;
+}
+
+.drawer-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: #F5F0EB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawer-avatar-text {
+  font-size: 44rpx;
+}
+
+.drawer-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.drawer-nickname {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #222;
+}
+
+.drawer-role {
+  font-size: 22rpx;
+  color: #A9D8F5;
+  background: #F0F8FF;
+  padding: 2rpx 16rpx;
+  border-radius: 12rpx;
+  align-self: flex-start;
+}
+
+.drawer-family {
+  padding: 24rpx 36rpx;
+  border-bottom: 1px solid #F0EBE6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.drawer-family-name {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #222;
+}
+
+.drawer-member-count {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.drawer-menu {
+  flex: 1;
+  padding: 16rpx 0;
+}
+
+.drawer-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 28rpx 36rpx;
+  transition: background 0.15s;
+}
+
+.drawer-menu-item:active {
+  background: #F5F0EB;
+}
+
+.drawer-menu-item.disabled {
+  opacity: 0.4;
+}
+
+.drawer-menu-item.disabled:active {
+  background: transparent;
+}
+
+.drawer-menu-icon {
+  font-size: 32rpx;
+  width: 40rpx;
+  text-align: center;
+}
+
+.drawer-menu-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #222;
+}
+
+.drawer-menu-arrow {
+  font-size: 32rpx;
+  color: #CCC;
+}
+
+.drawer-menu-tag {
+  font-size: 20rpx;
+  color: #fff;
+  background: #FFC5C9;
+  padding: 2rpx 14rpx;
+  border-radius: 12rpx;
+}
+
+.drawer-menu-dev {
+  font-size: 20rpx;
+  color: #CCC;
+}

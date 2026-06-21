@@ -1,5 +1,9 @@
 <view class="page">
+  <!-- ===== 顶部栏 ===== -->
   <view class="top-bar">
+    <view class="top-left" bindtap="openDrawer">
+      <text class="menu-icon">☰</text>
+    </view>
     <view class="family-name">
       <text class="family-icon">🏠</text>
       <text>{{familyName}}</text>
@@ -82,5 +86,54 @@
 
   <view class="loading-state" wx:if="{{loading}}">
     <text class="loading-text">加载菜谱中...</text>
+  </view>
+
+  <!-- ===== 侧边抽屉遮罩 ===== -->
+  <view class="drawer-mask {{drawerOpen ? 'show' : ''}}" bindtap="closeDrawer"></view>
+
+  <!-- ===== 侧边抽屉菜单 ===== -->
+  <view class="drawer-panel {{drawerOpen ? 'open' : ''}}">
+    <view class="drawer-inner">
+      <!-- 用户信息 -->
+      <view class="drawer-user">
+        <view class="drawer-avatar">
+          <text class="drawer-avatar-text">{{currentUser.avatar || '👤'}}</text>
+        </view>
+        <view class="drawer-user-info">
+          <text class="drawer-nickname">{{currentUser.nickname || '我'}}</text>
+          <text class="drawer-role">{{currentUser.role || '主人'}}</text>
+        </view>
+      </view>
+
+      <!-- 家庭信息 -->
+      <view class="drawer-family">
+        <text class="drawer-family-name">🏠 {{familyName}}</text>
+        <text class="drawer-member-count">👥 1位成员</text>
+      </view>
+
+      <!-- 菜单项 -->
+      <view class="drawer-menu">
+        <view class="drawer-menu-item" bindtap="goMember">
+          <text class="drawer-menu-icon">👥</text>
+          <text class="drawer-menu-text">家庭成员</text>
+          <text class="drawer-menu-arrow">›</text>
+        </view>
+        <view class="drawer-menu-item" bindtap="goHistory">
+          <text class="drawer-menu-icon">📋</text>
+          <text class="drawer-menu-text">点餐记录</text>
+          <text class="drawer-menu-arrow">›</text>
+        </view>
+        <view class="drawer-menu-item" bindtap="inviteFamily">
+          <text class="drawer-menu-icon">🔗</text>
+          <text class="drawer-menu-text">邀请家人</text>
+          <text class="drawer-menu-tag">新</text>
+        </view>
+        <view class="drawer-menu-item disabled">
+          <text class="drawer-menu-icon">⚙️</text>
+          <text class="drawer-menu-text">设置</text>
+          <text class="drawer-menu-dev">开发中</text>
+        </view>
+      </view>
+    </view>
   </view>
 </view>

@@ -7,12 +7,20 @@ App({
       traceUser: true
     })
     db = wx.cloud.database()
-    this.getOpenId()
+    // 登录 + 创建/获取家庭
+    this.login()
   },
 
   globalData: {
     openid: '',
     familyId: 'default',
+    currentUser: {
+      nickname: '我',
+      avatar: '👤',
+      role: 'owner',
+      isLoggedIn: false
+    },
+    familyName: '兜兜家',
     // 默认菜品数据，云数据库加载成功后会覆盖
     dishes: [
       { id: 'default_1', name: '红烧牛肉面', category: 'noodle', imageUrl: '', note: '', selected: false },
@@ -31,15 +39,57 @@ App({
     orders: []
   },
 
-  getOpenId() {
-    wx.cloud.callFunction({
-      name: 'login',
-      success: (res) => {
-        this.globalData.openid = res.result.openid
-      },
-      fail: (err) => {
-        console.error('登录失败', err)
-      }
+  // 微信登录 + 创建/加入家庭（支持邀请）
+  login(inviteFamilyId) {
+    return new Promise((resolve) => {
+      wx.login({
+        success: () => {
+          // 没被邀请时，先看缓存
+          if (!inviteFamilyId) {
+            const saved = wx.getStorageSync('hb_user')
+            if (saved && saved.openid) {
+              this.globalData.openid = saved.openid
+              this.globalData.familyId = saved.familyId || 'default'
+              this.globalData.currentUser = saved.currentUser || { nickname: '我', avatar: '👤', role: 'owner', isLoggedIn: true }
+              this.globalData.familyName = saved.familyName || '兜兜家'
+              resolve(saved)
+              return
+            }
+          }
+
+          // 调用云函数登录（创建或获取家庭）
+          wx.cloud.callFunction({
+            name: 'login',
+            data: { nickname: '', avatar: '', inviteFamilyId: inviteFamilyId || '' },
+            success: (callRes) => {
+              const data = callRes.result
+              this.globalData.openid = data.openid
+              this.globalData.familyId = data.familyId
+              this.globalData.familyName = data.familyName || '我的家'
+              this.globalData.currentUser = {
+                nickname: '我',
+                avatar: '👤',
+                role: data.role || 'member',
+                isLoggedIn: true
+              }
+              wx.setStorageSync('hb_user', {
+                openid: data.openid,
+                familyId: data.familyId,
+                familyName: data.familyName,
+                currentUser: { nickname: '我', avatar: '👤', role: data.role, isLoggedIn: true }
+              })
+              resolve(data)
+            },
+            fail: (err) => {
+              console.error('登录失败', err)
+              const cached = wx.getStorageSync('hb_user')
+              if (cached) Object.assign(this.globalData, cached)
+              resolve(null)
+            }
+          })
+        },
+        fail: () => resolve(null)
+      })
     })
   },
 
@@ -133,12 +183,14 @@ App({
   },
 
   submitOrder(items, note) {
+    const who = this.globalData.currentUser.nickname || '我'
     return db.collection('orders').add({
       data: {
         familyId: this.globalData.familyId,
         items: items.map(i => ({ name: i.name, category: i.category })),
         note: note || '',
         createdBy: this.globalData.openid,
+        createdByName: who,
         status: 'pending',
         createdAt: db.serverDate()
       }
@@ -148,6 +200,7 @@ App({
         id: 'local_order_' + Date.now(),
         items: items,
         note: note || '',
+        createdByName: who,
         createdAt: new Date(),
         status: 'pending'
       }
@@ -171,6 +224,40 @@ App({
         if (local) this.globalData.orders = local
         return this.globalData.orders
       })
+  },
+
+  // 获取家庭成员列表
+  fetchFamilyMembers(familyId) {
+    return db.collection('family_members')
+      .where({ familyId: familyId || this.globalData.familyId })
+      .get()
+      .then(res => res.data)
+      .catch(err => {
+        console.error('获取家庭成员失败', err)
+        return []
+      })
+  },
+
+  // 更新当前用户昵称和头像
+  updateUserInfo(nickname, avatar) {
+    this.globalData.currentUser.nickname = nickname
+    this.globalData.currentUser.avatar = avatar
+    const saved = wx.getStorageSync('hb_user') || {}
+    saved.currentUser = this.globalData.currentUser
+    wx.setStorageSync('hb_user', saved)
+
+    // 同步到云数据库
+    db.collection('family_members')
+      .where({ openid: this.globalData.openid })
+      .get()
+      .then(res => {
+        if (res.data.length > 0) {
+          db.collection('family_members').doc(res.data[0]._id).update({
+            data: { nickname, avatar }
+          })
+        }
+      })
+      .catch(() => {})
   },
 
   getDb() {
