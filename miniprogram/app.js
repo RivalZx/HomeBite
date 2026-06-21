@@ -239,9 +239,9 @@ App({
   },
 
   // 更新当前用户昵称和头像
-  updateUserInfo(nickname, avatar) {
+  updateUserInfo(nickname, avatarUrl) {
     this.globalData.currentUser.nickname = nickname
-    this.globalData.currentUser.avatar = avatar
+    this.globalData.currentUser.avatarUrl = avatarUrl
     const saved = wx.getStorageSync('hb_user') || {}
     saved.currentUser = this.globalData.currentUser
     wx.setStorageSync('hb_user', saved)
@@ -253,7 +253,7 @@ App({
       .then(res => {
         if (res.data.length > 0) {
           db.collection('family_members').doc(res.data[0]._id).update({
-            data: { nickname, avatar }
+            data: { nickname, avatar: avatarUrl }
           })
         }
       })

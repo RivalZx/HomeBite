@@ -19,8 +19,20 @@ Page({
     wx.chooseImage({
       count: 1, sizeType: ['compressed'], sourceType: ['album', 'camera'],
       success: (res) => {
-        this.setData({ imageUrl: res.tempFilePaths[0] })
-        this.checkCanSave()
+        const tempPath = res.tempFilePaths[0]
+        // 进一步压缩图片到最大宽度 640px，加快上传和显示速度
+        wx.compressImage({
+          src: tempPath,
+          quality: 80,
+          success: (compressRes) => {
+            this.setData({ imageUrl: compressRes.tempFilePath })
+            this.checkCanSave()
+          },
+          fail: () => {
+            this.setData({ imageUrl: tempPath })
+            this.checkCanSave()
+          }
+        })
       }
     })
   },

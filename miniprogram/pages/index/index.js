@@ -42,6 +42,7 @@ Page({
         currentUser: {
           nickname: gu.currentUser.nickname || '我',
           avatar: gu.currentUser.avatar || '👤',
+          avatarUrl: gu.currentUser.avatarUrl || '',
           role: gu.currentUser.role === 'owner' ? '主人' : '成员'
         }
       })
@@ -73,7 +74,10 @@ Page({
 
   filterDishes() {
     const dishes = app.globalData.dishes || []
-    dishes.forEach(d => { d.selected = app.globalData.selectedDishes.some(s => s.id === d.id) })
+    dishes.forEach(d => {
+      d.selected = app.globalData.selectedDishes.some(s => s.id === d.id)
+      if (d.imgLoaded === undefined) d.imgLoaded = false
+    })
     this.setData({ filteredDishes: dishes.filter(d => d.category === this.data.currentCategory) })
   },
 
@@ -143,6 +147,26 @@ Page({
     wx.navigateTo({ url: '/pages/member/member' })
   },
 
+  // 选择微信头像
+  onChooseAvatar(e) {
+    const avatarUrl = e.detail.avatarUrl
+    if (avatarUrl) {
+      app.updateUserInfo(this.data.currentUser.nickname, avatarUrl)
+      this.setData({
+        currentUser: { ...this.data.currentUser, avatarUrl: avatarUrl }
+      })
+    }
+  },
+
+  // 设置昵称
+  onNicknameInput(e) {
+    const nickname = e.detail.value
+    app.updateUserInfo(nickname, this.data.currentUser.avatarUrl)
+    this.setData({
+      currentUser: { ...this.data.currentUser, nickname: nickname }
+    })
+  },
+
   inviteFamily() {
     this.closeDrawer()
     // 触发微信分享
@@ -165,6 +189,16 @@ Page({
     if (carousels[idx]) {
       carousels[idx] = { imageUrl: '', emoji: '📸', label: carousels[idx].label || '' }
       this.setData({ carousels })
+    }
+  },
+
+  // 菜品图片加载完成时，标记为已加载（触发渐入动画）
+  onDishImgLoad(e) {
+    const id = e.currentTarget.dataset.id
+    const dish = app.globalData.dishes.find(d => d.id === id)
+    if (dish) {
+      dish.imgLoaded = true
+      this.filterDishes()
     }
   },
 

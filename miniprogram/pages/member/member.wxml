@@ -7,7 +7,8 @@
       <text class="section-title">家庭成员 · {{members.length}}人</text>
       <view class="member-item" wx:for="{{members}}" wx:key="_id">
         <view class="member-avatar">
-          <text class="member-avatar-text">{{item.avatar || '👤'}}</text>
+          <image class="member-avatar-img" wx:if="{{item.avatar}}" src="{{item.avatar}}" mode="aspectFill"></image>
+          <text class="member-avatar-text" wx:else>👤</text>
         </view>
         <view class="member-info">
           <text class="member-name">{{item.nickname || '家人'}}</text>

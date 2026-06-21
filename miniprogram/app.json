@@ -7,7 +7,7 @@
     "pages/member/member"
   ],
   "window": {
-    "navigationBarTitleText": "HomeBite",
+    "navigationBarTitleText": "BiteMate",
     "navigationBarBackgroundColor": "#FFFDF8",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#FFFDF8",

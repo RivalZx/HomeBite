@@ -46,7 +46,7 @@
     <view class="dish-card" wx:for="{{filteredDishes}}" wx:key="id"
       data-id="{{item.id}}" bindtap="toggleDish" bindlongpress="editDish">
       <view class="dish-img-wrap {{item.selected ? 'selected' : ''}}">
-        <image class="dish-img" wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" binderror="onDishImgError" data-id="{{item.id}}"></image>
+        <image class="dish-img {{item.imgLoaded ? 'loaded' : ''}}" wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" binderror="onDishImgError" bindload="onDishImgLoad" data-id="{{item.id}}"></image>
         <view class="dish-placeholder" wx:else style="background: {{cateBg(item.category)}};">
           <text class="dish-emoji">{{cateEmoji(item.category)}}</text>
         </view>
@@ -97,11 +97,11 @@
       <!-- 用户信息 -->
       <view class="drawer-user">
         <view class="drawer-avatar">
-          <text class="drawer-avatar-text">{{currentUser.avatar || '👤'}}</text>
+          <image class="drawer-avatar-img" wx:if="{{currentUser.avatarUrl}}" src="{{currentUser.avatarUrl}}" mode="aspectFill"></image>
+          <text class="drawer-avatar-text" wx:else>👤</text>
         </view>
         <view class="drawer-user-info">
           <text class="drawer-nickname">{{currentUser.nickname || '我'}}</text>
-          <text class="drawer-role">{{currentUser.role || '主人'}}</text>
         </view>
       </view>
 
