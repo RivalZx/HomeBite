@@ -1,0 +1,51 @@
+<view class="page">
+  <view class="section">
+    <text class="section-title">个人信息</text>
+
+    <view class="setting-item">
+      <text class="setting-label">头像</text>
+      <view class="setting-right">
+        <button class="avatar-right-btn" open-type="chooseAvatar" bindchooseavatar="onAvatarChosen">
+          <text class="change-avatar-text">更换头像</text>
+          <text class="right-arrow">›</text>
+        </button>
+      </view>
+    </view>
+
+    <view class="setting-item">
+      <text class="setting-label">昵称</text>
+      <view class="setting-right">
+        <input class="nickname-input" type="nickname" placeholder="输入微信昵称" value="{{currentUser.nickname}}" bindinput="onNicknameInput" />
+        <text class="right-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">家庭</text>
+
+    <view class="setting-item">
+      <text class="setting-label">家庭名称</text>
+      <input class="nickname-input" placeholder="给家起个名字" value="{{familyName}}" bindinput="onFamilyNameInput" />
+    </view>
+
+    <view class="setting-item">
+      <text class="setting-label">家庭ID</text>
+      <view class="setting-right">
+        <text class="family-id-text">{{familyId}}</text>
+        <view class="copy-btn" bindtap="copyFamilyId">复制</view>
+      </view>
+    </view>
+
+    <view class="setting-item">
+      <text class="setting-label">角色</text>
+      <text class="role-text">{{isChef ? '厨师' : '成员'}}</text>
+    </view>
+  </view>
+
+  <view class="leave-section">
+    <view class="leave-btn" bindtap="leaveFamily">退出家庭</view>
+  </view>
+
+  <view class="save-tip">修改自动保存</view>
+</view>

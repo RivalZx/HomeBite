@@ -118,6 +118,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .drawer-avatar-img {
@@ -135,31 +136,25 @@
   gap: 6rpx;
 }
 
-.drawer-nickname {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #222;
-}
 
-
-.drawer-nickname-input {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #222;
-  background: #F5F0EB;
-  padding: 4rpx 12rpx;
-  border-radius: 10rpx;
-  height: 50rpx;
-  line-height: 50rpx;
-  width: 200rpx;
-}
-.drawer-role {
+.drawer-role-tag {
   font-size: 22rpx;
   color: #A9D8F5;
   background: #F0F8FF;
   padding: 2rpx 16rpx;
   border-radius: 12rpx;
   align-self: flex-start;
+}
+
+.drawer-role-tag.member {
+  color: #999;
+  background: #F5F0EB;
+}
+
+.drawer-nickname {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #222;
 }
 
 .drawer-family {

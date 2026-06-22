@@ -3,28 +3,21 @@ const app = getApp()
 Page({
   data: {
     currentCategory: 'noodle',
-    familyName: '兜兜家',
+    familyName: '我的家',
     carousels: [],
     filteredDishes: [],
     selectedCount: 0,
     loading: true,
     drawerOpen: false,
+    isChef: false,
     currentUser: {
       nickname: '我',
       avatar: '👤',
-      role: '主人'
+      role: '成员'
     }
   },
 
-  onLoad(options) {
-    // 被邀请时：强制重新登录 + 保存邀请码
-    if (options && options.familyId) {
-      app.globalData.pendingInvite = options.familyId
-      app.globalData.currentUser.isLoggedIn = false  // 强制重新登录
-    }
-    this.loadData()
-  },
-
+  onLoad() { this.loadData() },
   onShow() { this.loadData() },
 
   async loadData() {
@@ -32,35 +25,21 @@ Page({
     this._loading = true
     this.setData({ loading: true })
 
-    // 等待登录完成（如果还没登录）
-    if (!app.globalData.currentUser.isLoggedIn) {
-      const inviteId = app.globalData.pendingInvite || ''
-      await app.login(inviteId)
-      // 登录完成后清除邀请标记
-      if (app.globalData.pendingInvite) {
-        app.globalData.pendingInvite = ''
-      }
-    }
-
-    // 同步用户信息
     const gu = app.globalData
-    if (gu.currentUser && gu.currentUser.isLoggedIn) {
+    if (gu.familyId) {
       this.setData({
-        familyName: gu.familyName || '兜兜家',
+        familyName: gu.familyName || '我的家',
+        isChef: gu.currentUser.isChef || false,
         currentUser: {
           nickname: gu.currentUser.nickname || '我',
           avatar: gu.currentUser.avatar || '👤',
           avatarUrl: gu.currentUser.avatarUrl || '',
-          role: gu.currentUser.role === 'owner' ? '主人' : '成员'
+          role: gu.currentUser.isChef ? '厨师' : '成员'
         }
       })
     }
 
-    try {
-      await app.fetchDishes()
-    } catch (e) {
-      console.error('云加载失败，使用默认数据', e)
-    }
+    try { await app.fetchDishes() } catch (e) { console.error(e) }
     this.buildCarousel()
     this.filterDishes()
     this.updateSelectedCount()
@@ -76,7 +55,7 @@ Page({
     } else {
       this.setData({ carousels: [
         { imageUrl: '', emoji: '📸', label: '上传照片后轮播' },
-        { imageUrl: '', emoji: '🍜', label: '今天想吃什么？' },
+        { imageUrl: '', emoji: '🍜', label: '今天想吃什么？' }
       ]})
     }
   },
@@ -112,8 +91,16 @@ Page({
 
   updateSelectedCount() { this.setData({ selectedCount: app.globalData.selectedDishes.length }) },
 
-  editDish(e) { wx.navigateTo({ url: `/pages/add-dish/add-dish?id=${e.currentTarget.dataset.id}` }) },
-  goAddDish() { wx.navigateTo({ url: `/pages/add-dish/add-dish?category=${this.data.currentCategory}` }) },
+  editDish(e) {
+    if (!this.data.isChef) { wx.showToast({ title: '只有厨师可以编辑', icon: 'none' }); return }
+    wx.navigateTo({ url: `/pages/add-dish/add-dish?id=${e.currentTarget.dataset.id}` })
+  },
+
+  goAddDish() {
+    if (!this.data.isChef) { wx.showToast({ title: '只有厨师可以添加', icon: 'none' }); return }
+    wx.navigateTo({ url: `/pages/add-dish/add-dish?category=${this.data.currentCategory}` })
+  },
+
   goHistory() { wx.navigateTo({ url: '/pages/history/history' }) },
 
   goWishlist() {
@@ -144,81 +131,55 @@ Page({
 
   // ===== 抽屉菜单 =====
   openDrawer() {
-    this.setData({ drawerOpen: true })
-  },
-
-  closeDrawer() {
-    this.setData({ drawerOpen: false })
-  },
-
-  goMember() {
-    this.closeDrawer()
-    wx.navigateTo({ url: '/pages/member/member' })
-  },
-
-  // 选择微信头像
-  onChooseAvatar(e) {
-    const avatarUrl = e.detail.avatarUrl
-    if (avatarUrl) {
-      app.updateUserInfo(this.data.currentUser.nickname, avatarUrl)
-      this.setData({
-        currentUser: { ...this.data.currentUser, avatarUrl: avatarUrl }
-      })
-    }
-  },
-
-  // 设置昵称
-  onNicknameInput(e) {
-    const nickname = e.detail.value
-    app.updateUserInfo(nickname, this.data.currentUser.avatarUrl)
+    const gu = app.globalData
     this.setData({
-      currentUser: { ...this.data.currentUser, nickname: nickname }
+      drawerOpen: true,
+      familyName: gu.familyName || '我的家',
+      isChef: gu.currentUser.isChef || false,
+      currentUser: {
+        nickname: gu.currentUser.nickname || '我',
+        avatar: gu.currentUser.avatar || '👤',
+        avatarUrl: gu.currentUser.avatarUrl || '',
+        role: gu.currentUser.isChef ? '厨师' : '成员'
+      }
     })
   },
 
+  closeDrawer() { this.setData({ drawerOpen: false }) },
+
+  goMember() { this.closeDrawer(); wx.navigateTo({ url: '/pages/member/member' }) },
+
+  goSettings() { this.closeDrawer(); wx.navigateTo({ url: '/pages/settings/settings' }) },
+
   inviteFamily() {
     this.closeDrawer()
-    // 触发微信分享
     wx.showToast({ title: '点击右上角分享给家人', icon: 'none' })
   },
 
-  // 右上角分享（首页和成员页都可触发）
   onShareAppMessage() {
     return {
-      title: '🏠 来 HomeBite 一起点餐吧！',
-      path: `/pages/index/index?familyId=${app.globalData.familyId}`,
+      title: '🏠 来 BiteMate 一起点餐吧！',
+      path: '/pages/index/index',
       imageUrl: ''
     }
   },
 
-  // 轮播图加载失败时，显示默认占位
   onCarouselImgError(e) {
     const idx = e.currentTarget.dataset.index
-    const carousels = [...this.data.carousels]
-    if (carousels[idx]) {
-      carousels[idx] = { imageUrl: '', emoji: '📸', label: carousels[idx].label || '' }
-      this.setData({ carousels })
-    }
+    const cs = [...this.data.carousels]
+    if (cs[idx]) { cs[idx] = { imageUrl: '', emoji: '📸', label: cs[idx].label || '' }; this.setData({ carousels: cs }) }
   },
 
-  // 菜品图片加载完成时，标记为已加载（触发渐入动画）
   onDishImgLoad(e) {
     const id = e.currentTarget.dataset.id
     const dish = app.globalData.dishes.find(d => d.id === id)
-    if (dish) {
-      dish.imgLoaded = true
-      this.filterDishes()
-    }
+    if (dish) { dish.imgLoaded = true; this.filterDishes() }
   },
 
-  // 菜品图片加载失败时，显示 emoji 占位
   onDishImgError(e) {
     const id = e.currentTarget.dataset.id
     const dish = app.globalData.dishes.find(d => d.id === id)
-    if (dish) {
-      dish.imageUrl = ''
-      this.filterDishes()
-    }
+    if (dish) { dish.imageUrl = ''; this.filterDishes() }
   },
 
   cateBg(c) { return { noodle: '#FFE8E0', rice: '#E0F0E8', feast: '#FFE0E0' }[c] || '#F0F0F0' },

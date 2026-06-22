@@ -7,8 +7,17 @@ App({
       traceUser: true
     })
     db = wx.cloud.database()
-    // 登录由首页的 loadData 触发（为了支持带邀请参数打开）
-    // 不在 onLaunch 中提前调用 login()
+
+    // 检查用户是否有家庭缓存，有则表明已处理过欢迎页
+    const saved = wx.getStorageSync('hb_user')
+    if (saved && saved.familyId && saved.familyId !== 'default') {
+      this.globalData.openid = saved.openid || ''
+      this.globalData.familyId = saved.familyId
+      this.globalData.familyName = saved.familyName || '我的家'
+      this.globalData.currentUser = saved.currentUser || {
+        nickname: '我', avatar: '👤', avatarUrl: '', role: 'member', isLoggedIn: true, isChef: false
+      }
+    }
   },
 
   globalData: {
@@ -17,10 +26,12 @@ App({
     currentUser: {
       nickname: '我',
       avatar: '👤',
-      role: 'owner',
-      isLoggedIn: false
+      avatarUrl: '',
+      role: 'member',
+      isLoggedIn: false,
+      isChef: false
     },
-    familyName: '兜兜家',
+    familyName: "我的家",
     // 默认菜品数据，云数据库加载成功后会覆盖
     dishes: [
       { id: 'default_1', name: '红烧牛肉面', category: 'noodle', imageUrl: '', note: '', selected: false },
@@ -41,59 +52,29 @@ App({
     isLoggingIn: false
   },
 
-  // 微信登录 + 创建/加入家庭（支持邀请）
-  login(inviteFamilyId) {
+  // 获取微信 openid（不处理家庭，家庭由 welcome 页面处理）
+  login() {
     return new Promise((resolve) => {
+      const saved = wx.getStorageSync('hb_user')
+      if (saved && saved.openid) {
+        this.globalData.openid = saved.openid
+        resolve(saved)
+        return
+      }
       wx.login({
         success: () => {
-          // 没被邀请时，先看缓存
-          if (!inviteFamilyId) {
-            const saved = wx.getStorageSync('hb_user')
-            if (saved && saved.openid) {
-              this.globalData.openid = saved.openid
-              this.globalData.familyId = saved.familyId || 'default'
-              this.globalData.currentUser = saved.currentUser || { nickname: '我', avatar: '👤', role: 'owner', isLoggedIn: true }
-              this.globalData.familyName = saved.familyName || '兜兜家'
-              this.globalData.isLoggingIn = false
-              resolve(saved)
-              return
-            }
-          }
-
-          // 调用云函数登录（创建或获取家庭）
           wx.cloud.callFunction({
             name: 'login',
-            data: { nickname: '', avatar: '', inviteFamilyId: inviteFamilyId || '' },
-            success: (callRes) => {
-              const data = callRes.result
+            data: {},
+            success: (res) => {
+              const data = res.result
               this.globalData.openid = data.openid
-              this.globalData.familyId = data.familyId
-              this.globalData.familyName = data.familyName || '我的家'
-              this.globalData.currentUser = {
-                nickname: '我',
-                avatar: '👤',
-                role: data.role || 'member',
-                isLoggedIn: true
-              }
-              this.globalData.isLoggingIn = false
-              wx.setStorageSync('hb_user', {
-                openid: data.openid,
-                familyId: data.familyId,
-                familyName: data.familyName,
-                currentUser: { nickname: '我', avatar: '👤', role: data.role, isLoggedIn: true }
-              })
               resolve(data)
             },
-            fail: (err) => {
-              console.error('登录失败', err)
-              const cached = wx.getStorageSync('hb_user')
-              if (cached) Object.assign(this.globalData, cached)
-              this.globalData.isLoggingIn = false
-              resolve(null)
-            }
+            fail: () => resolve(null)
           })
         },
-        fail: () => { this.globalData.isLoggingIn = false; resolve(null) }
+        fail: () => resolve(null)
       })
     })
   },

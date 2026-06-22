@@ -1,0 +1,165 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 48rpx;
+  min-height: 100vh;
+  background: #FFFDF8;
+}
+
+/* logo区域 */
+.logo-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 160rpx;
+  margin-bottom: 80rpx;
+}
+
+.logo-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+}
+
+.logo-title {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #222;
+}
+
+.logo-desc {
+  font-size: 28rpx;
+  color: #999;
+  margin-top: 12rpx;
+}
+
+/* 选择区域 */
+.choose-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.option-btn {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  background: #fff;
+  padding: 32rpx 28rpx;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+}
+
+.option-btn:active {
+  opacity: 0.8;
+}
+
+.option-icon {
+  font-size: 48rpx;
+  width: 60rpx;
+  text-align: center;
+}
+
+.option-texts {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.option-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #222;
+}
+
+.option-desc {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.option-arrow {
+  font-size: 40rpx;
+  color: #CCC;
+}
+
+/* 表单区域 */
+.form-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-card {
+  width: 100%;
+  background: #fff;
+  padding: 40rpx 32rpx;
+  border-radius: 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+}
+
+.form-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #222;
+  display: block;
+  margin-bottom: 36rpx;
+}
+
+.form-label {
+  font-size: 26rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 88rpx;
+  background: #F5F0EB;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  font-size: 32rpx;
+  color: #222;
+  box-sizing: border-box;
+  border: none;
+}
+
+.form-btn {
+  width: 100%;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background: #A9D8F5;
+  color: #222;
+  font-size: 32rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 36rpx;
+}
+
+.form-btn:active {
+  opacity: 0.8;
+}
+
+.form-btn.disabled {
+  opacity: 0.35;
+}
+
+.back-btn {
+  font-size: 28rpx;
+  color: #999;
+  padding: 32rpx 0;
+}
+
+/* 加载 */
+.loading-area {
+  padding-top: 80rpx;
+}
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
+}

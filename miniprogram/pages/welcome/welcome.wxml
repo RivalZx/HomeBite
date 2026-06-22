@@ -1,0 +1,51 @@
+<view class="page">
+  <view class="logo-area">
+    <view class="logo-icon">🐱</view>
+    <text class="logo-title">BiteMate</text>
+    <text class="logo-desc">家庭点餐，轻松一餐</text>
+  </view>
+
+  <view class="choose-area" wx:if="{{step === 'choose'}}">
+    <view class="option-btn create-btn" bindtap="showCreate">
+      <text class="option-icon">🏠</text>
+      <view class="option-texts">
+        <text class="option-title">创建家庭</text>
+        <text class="option-desc">创建你的家庭菜单，邀请家人加入</text>
+      </view>
+      <text class="option-arrow">›</text>
+    </view>
+
+    <view class="option-btn join-btn" bindtap="showJoin">
+      <text class="option-icon">🔗</text>
+      <view class="option-texts">
+        <text class="option-title">加入家庭</text>
+        <text class="option-desc">输入家庭ID，加入家人的菜单</text>
+      </view>
+      <text class="option-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="form-area" wx:if="{{step === 'create'}}">
+    <view class="form-card">
+      <text class="form-title">🏠 创建家庭</text>
+      <text class="form-label">给家庭起个名字</text>
+      <input class="form-input" placeholder="比如：我的家" value="{{familyName}}" bindinput="onNameInput" maxlength="20" />
+      <view class="form-btn {{!familyName ? 'disabled' : ''}}" bindtap="createFamily">创建并开始点餐</view>
+    </view>
+    <view class="back-btn" bindtap="backToChoose">‹ 返回</view>
+  </view>
+
+  <view class="form-area" wx:if="{{step === 'join'}}">
+    <view class="form-card">
+      <text class="form-title">🔗 加入家庭</text>
+      <text class="form-label">输入家庭ID</text>
+      <input class="form-input" placeholder="9位数字家庭ID" value="{{joinId}}" bindinput="onJoinIdInput" maxlength="9" type="number" />
+      <view class="form-btn {{joinId.length !== 9 ? 'disabled' : ''}}" bindtap="joinFamily">加入并开始点餐</view>
+    </view>
+    <view class="back-btn" bindtap="backToChoose">‹ 返回</view>
+  </view>
+
+  <view class="loading-area" wx:if="{{step === 'loading'}}">
+    <text class="loading-text">⏳ 处理中...</text>
+  </view>
+</view>

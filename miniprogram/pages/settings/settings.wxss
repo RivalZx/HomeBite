@@ -1,0 +1,124 @@
+.page { padding: 32rpx; min-height: 100vh; }
+
+.section { margin-bottom: 48rpx; }
+
+.section-title {
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 20rpx;
+  display: block;
+  padding: 0 8rpx;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 8rpx;
+  border-bottom: 1px solid #F0EBE6;
+  margin-bottom: 0;
+  background: transparent;
+}
+
+.setting-item:last-of-type {
+  border-bottom: none;
+}
+
+.setting-label {
+  font-size: 28rpx;
+  color: #222;
+  font-weight: 500;
+}
+
+.setting-right {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.change-avatar-text {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.avatar-right-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8rpx;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  line-height: normal;
+  min-height: auto;
+  height: auto;
+  width: 240rpx;
+}
+
+.avatar-right-btn::after {
+  border: none;
+}
+
+.right-arrow {
+  font-size: 32rpx;
+  color: #CCC;
+  font-weight: 300;
+}
+
+.nickname-input {
+  font-size: 28rpx;
+  color: #222;
+  padding: 8rpx 0;
+  height: 56rpx;
+  line-height: 56rpx;
+  width: 240rpx;
+  text-align: right;
+  border: none;
+  background: transparent;
+}
+
+.save-tip {
+  text-align: center;
+  font-size: 24rpx;
+  color: #CCC;
+  padding-top: 48rpx;
+}
+
+.family-id-text {
+  font-size: 26rpx;
+  color: #222;
+  font-family: monospace;
+  letter-spacing: 2rpx;
+}
+
+.copy-btn {
+  font-size: 22rpx;
+  color: #A9D8F5;
+  background: #F0F8FF;
+  padding: 4rpx 16rpx;
+  border-radius: 12rpx;
+}
+
+.role-text {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.leave-section {
+  margin-top: 60rpx;
+  text-align: center;
+  padding-bottom: 20rpx;
+}
+
+.leave-btn {
+  font-size: 28rpx;
+  color: #FF8A8A;
+  padding: 24rpx;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.leave-btn:active {
+  background: #FFF5F5;
+}

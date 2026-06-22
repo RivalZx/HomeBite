@@ -1,10 +1,12 @@
 {
   "pages": [
+    "pages/welcome/welcome",
     "pages/index/index",
     "pages/wishlist/wishlist",
     "pages/add-dish/add-dish",
     "pages/history/history",
-    "pages/member/member"
+    "pages/member/member",
+    "pages/settings/settings"
   ],
   "window": {
     "navigationBarTitleText": "BiteMate",

@@ -12,8 +12,8 @@
         </view>
         <view class="member-info">
           <text class="member-name">{{item.nickname || '家人'}}</text>
-          <text class="member-role-tag {{item.role === 'owner' ? 'owner' : ''}}">
-            {{item.role === 'owner' ? '主人' : '成员'}}
+          <text class="member-role-tag {{item.role === 'chef' ? 'chef' : ''}}">
+            {{item.role === 'chef' ? '主人' : '成员'}}
           </text>
         </view>
         <text class="member-badge" wx:if="{{item.openid === myOpenid}}">我</text>

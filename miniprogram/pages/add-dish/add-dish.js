@@ -4,6 +4,12 @@ Page({
   data: { isEdit: false, editId: null, imageUrl: '', dishName: '', category: 'noodle', note: '', canSave: false, uploading: false },
 
   onLoad(options) {
+    if (!app.globalData.currentUser.isChef) {
+      wx.showToast({ title: '只有厨师可以管理菜品', icon: 'none' })
+      setTimeout(() => wx.navigateBack(), 1000)
+      return
+    }
+
     if (options.id) {
       const d = app.globalData.dishes.find(d => d.id === options.id)
       if (d) {
